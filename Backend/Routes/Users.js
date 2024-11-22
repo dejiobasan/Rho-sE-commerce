@@ -15,7 +15,7 @@ const generateTokens = (userId) => {
 }
 
 const storeRefreshToken = async(userId, refreshToken) => {
-    await redis.set(`refesh_token: ${userId}`, refreshToken, "EX",7*24*60*60)// 7days
+    await redis.set(`refresh_token: ${userId}`, refreshToken, "EX",7*24*60*60)// 7days
 }
 
 const setCookies = (res, accessToken, refreshToken) => {
@@ -63,9 +63,87 @@ router.route("/signup").post(async (req, res) => {
     setCookies(res, accessToken, refreshToken);
 })
 
-router.route("/").post((req, res) => {
-
+router.route("/login").post(async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        await User.findOne({Email: email}).then((foundUser) => {
+            if (!foundUser) {
+                console.error(err);
+                res.status(401).json({message: "Login failed"});
+            } else {
+                if (foundUser) {
+                    bcrypt.compare(password, foundUser.Password, async (err, result) => {
+                        if (result === true) {
+                          const {accessToken, refreshToken} = generateTokens(foundUser._id)
+                          await storeRefreshToken(foundUser._id, refreshToken);
+                          setCookies(res,accessToken,refreshToken)
+                          res.status(200).json({
+                            success: true,
+                            message: "Login Successful!",
+                            User: {
+                              Name: foundUser.Name,
+                            }
+                          });
+                        }
+                     });
+                }
+            }
+        })
+    } catch (error) {
+        console.log("Error in Login Controller", error);
+        res.status(500).json({message: error.message})
+    }
 })
+
+router.route("/logout").post(async (req, res) => {
+    try {
+        const refreshToken = req.cookies.refreshToken;
+        if(refreshToken) {
+            const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+            await redis.del(`refresh_token: ${decoded.userId}`)
+        }
+        res.clearCookie("accessToken");
+        res.clearCookie("refreshToken");
+        res.json({message: "Logged out successfully"});
+    } catch (error) {
+        console.log("Error in Login Controller", error);
+        res.status(500).json({message: "Server Error!", error: error.message});
+    }
+})
+
+router.route("/refresh-token").post( async (req, res) => {
+    try {
+        const refreshToken = req.cookies.refreshToken;
+        if(!refreshToken) {
+            return res.status(401).json({message: "Unauthorized!"});
+        }
+
+        const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+        const storedToken = await redis.get(`refresh_token: ${decoded.userId}`);
+        if(storedToken !== refreshToken){
+            res.status(401).json({message: "Invalid refresh token!"})
+        }
+
+        const accessToken = jwt.sign({ userId: decoded.userId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m"});
+        res.cookie("accessToken", accessToken, {
+            httpOnly: true, //prevent XSS attacks, cross site scripting attacks
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict", //prevents CSRF attack, cross-site request forgery
+            maxAge: 15 * 60 * 1000, //15minutes
+        })
+
+        res.json({message: "Token refreshed successfully!"});
+    } catch (error) {
+        console.log("Error in Login Controller", error);
+        res.status(500).json({message: "Server Error!", error: error.message});
+    }
+})
+
+// router.route("/profile").get((req, res) => { implement later...
+
+// })
+
+
 
 
 
