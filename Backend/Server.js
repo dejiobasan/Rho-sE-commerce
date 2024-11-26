@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const cors = require("cors")
+const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
 const app = express();
@@ -12,20 +12,21 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
-mongoose.connect(process.env.BusinessDB, {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(process.env.BusinessDB, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 const connection = mongoose.connection;
 connection.once("open", () => {
-    console.log("MongoDB database connection established successfully!");  
+  console.log("MongoDB database connection established successfully!");
 });
 
 const UserRouter = require("./Routes/Users");
-const ProductRouter = require('./Routes/Products')
-
+const ProductRouter = require("./Routes/Products");
 
 app.use("/Users", UserRouter);
-app.use("/Products", ProductRouter)
-
+app.use("/Products", ProductRouter);
 
 app.listen(port, function () {
-    console.log(`server started at port ${port}.`);
+  console.log(`server started at port ${port}.`);
 });
