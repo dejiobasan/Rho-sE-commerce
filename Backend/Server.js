@@ -23,9 +23,13 @@ connection.once("open", () => {
 
 const UserRouter = require("./Routes/Users");
 const ProductRouter = require("./Routes/Products");
+const CartRouter = require("./Routes/Carts")
+const CouponRouter = require("./Routes.Coupons")
 
 app.use("/Users", UserRouter);
 app.use("/Products", ProductRouter);
+app.use("/Carts", CartRouter);
+app.use("/Coupon", CouponRouter);
 
 app.listen(port, function () {
   console.log(`server started at port ${port}.`);

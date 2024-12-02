@@ -71,7 +71,7 @@ router
           await cloudinary.uploader.destroy(`Products/${publicId}`);
           console.log("deleted image from cloudinary");
         } catch (error) {
-          console.log("error deleting image fromn cloudinary", error);
+          console.log("error deleting image from cloudinary", error);
         }
       }
 
@@ -112,7 +112,9 @@ router.route("/recommendations").get(async (req, res) => {
       { $project: { _id: 1, Name: 1, Description: 1, Image: 1, Price: 1 } },
     ]);
     res.json(products);
-  } catch (error) {}
+  } catch (error) {
+    console.log("Error in recommendations Controller", error);
+  }
 });
 
 router.route("/category/:Category").get(async (req, res) => {
@@ -120,9 +122,35 @@ router.route("/category/:Category").get(async (req, res) => {
   try {
     const products = await Product.find({ Category });
     res.json(products);
-  } catch (error) {}
+  } catch (error) {
+    console.log("Error in category Controller", error);
+  }
 });
 
-router;
+router.route("/toggleFeaturedProduct/:id").patch(async (req, res) => { 
+  try {
+    const product = await Product.findById(req.params.id);
+    if(product) {
+      product.isFeatured = !product.isFeatured;
+      const updatedProduct = await product.save();
+      await updateFeaturedProductCache();
+      res.json(updatedProduct);
+    } else {
+      res.status(404).json({message: "Product not found! "});
+    }
+  } catch (error) {
+    console.log("Error in the toogleFeaturedProduct controller", error.message);
+    res.status(500).json({ message: "Server Error", error: error.message })
+  }
+});
+
+async function updateFeaturedProductCache() {
+  try {
+    const featuredProducts = await Product.find({ isFeatured: true }).lean();//lean() returns plain JavaScript
+    await redis.set("featured_products", JSON.stringify(featuredProducts));
+  } catch (error) {
+    console.log("Error in updateFeaturedProductCache", error);
+  }
+}
 
 module.exports = router;
