@@ -1,5 +1,5 @@
 const { protectRoute } = require("../Middleware/authMiddleware");
-let Product = require("../Models/Product.js");
+let product = require("../Models/Product.js");
 
 const router = require("express").Router();
 
@@ -7,7 +7,7 @@ const router = require("express").Router();
 
 router.route(protectRoute, "/getCartProducts").get(async (req, res) => {
     try {
-        const products = await Product.find({_id: {$in: req.user.cartItems}})
+        const products = await product.find({_id: {$in: req.user.cartItems}})
         const cartItems = products.map(product => {
             const item = req.user.CartItems.find(cartItem => cartItem.id === product.id);
             return {...product.toJSON(), quantity: item.quantity}

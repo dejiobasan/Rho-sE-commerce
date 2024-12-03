@@ -1,5 +1,5 @@
 const router = require("express").Router();
-let Product = require("../Models/Product.js");
+let product = require("../Models/Product.js");
 const redis = require("../Lib/Redis.js");
 const cloudinary = require("../Lib/Cloudinary.js");
 const { protectRoute, adminRoute } = require("../Middleware/authMiddleware.js");
@@ -8,7 +8,7 @@ router
   .route(protectRoute, adminRoute, "/getAllproducts")
   .get(async (req, res) => {
     try {
-      const Products = await Product.find({});
+      const Products = await product.find({});
       res.json({ Products });
     } catch (error) {
       console.log("Error in getAllproducts Controller", error);
@@ -30,7 +30,7 @@ router
         });
       }
 
-      const newProduct = new Product({
+      const newProduct = new product({
         Name: name,
         Description: description,
         Price: price,
@@ -59,7 +59,7 @@ router
   .route(protectRoute, adminRoute, "/deleteProduct/:id")
   .delete(async (req, res) => {
     try {
-      const product = await Product.findById(req.params.id);
+      const product = await product.findById(req.params.id);
 
       if (!product) {
         return res.status(404).json({ message: "Product not found" });
@@ -75,7 +75,7 @@ router
         }
       }
 
-      await Product.findByIdAndDelete(req.params.id);
+      await product.findByIdAndDelete(req.params.id);
       res.json({ message: "Products deleted successfully!" });
     } catch (error) {
       console.log("Error in deleteProduct Controller", error);
@@ -90,7 +90,7 @@ router.route("/getFeaturedProducts").get(async (req, res) => {
       return res.json(JSON.parse(featuredProducts));
     }
 
-    featuredProducts = await Product.find({ isFeatured: true }).lean(); //.lean() is gonna return a plain javaScript object of a mongoDB document
+    featuredProducts = await product.find({ isFeatured: true }).lean(); //.lean() is gonna return a plain javaScript object of a mongoDB document
 
     if (!featuredProducts) {
       return res.status(404).json({ message: "No featured products found" });
@@ -107,7 +107,7 @@ router.route("/getFeaturedProducts").get(async (req, res) => {
 
 router.route("/recommendations").get(async (req, res) => {
   try {
-    const products = await Product.aggregate([
+    const products = await product.aggregate([
       { $sample: { size: 3 } },
       { $project: { _id: 1, Name: 1, Description: 1, Image: 1, Price: 1 } },
     ]);
@@ -120,7 +120,7 @@ router.route("/recommendations").get(async (req, res) => {
 router.route("/category/:Category").get(async (req, res) => {
   const { Category } = req.params;
   try {
-    const products = await Product.find({ Category });
+    const products = await product.find({ Category });
     res.json(products);
   } catch (error) {
     console.log("Error in category Controller", error);
@@ -129,7 +129,7 @@ router.route("/category/:Category").get(async (req, res) => {
 
 router.route("/toggleFeaturedProduct/:id").patch(async (req, res) => { 
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await product.findById(req.params.id);
     if(product) {
       product.isFeatured = !product.isFeatured;
       const updatedProduct = await product.save();
@@ -146,7 +146,7 @@ router.route("/toggleFeaturedProduct/:id").patch(async (req, res) => {
 
 async function updateFeaturedProductCache() {
   try {
-    const featuredProducts = await Product.find({ isFeatured: true }).lean();//lean() returns plain JavaScript
+    const featuredProducts = await product.find({ isFeatured: true }).lean();//lean() returns plain JavaScript
     await redis.set("featured_products", JSON.stringify(featuredProducts));
   } catch (error) {
     console.log("Error in updateFeaturedProductCache", error);

@@ -2,7 +2,7 @@ const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const redis = require("../Lib/Redis.js");
-let User = require("../Models/User.js");
+let user = require("../Models/User.js");
 require("dotenv").config();
 
 const generateTokens = (userId) => {
@@ -43,14 +43,14 @@ const setCookies = (res, accessToken, refreshToken) => {
 
 router.route("/signup").post(async (req, res) => {
   const { name, email, password } = req.body;
-  const userExists = await User.findOne({ email });
+  const userExists = await user.findOne({ email });
   if (userExists) {
     return res.status(400).json({ message: "User already exists" });
   }
   const saltRounds = Number(process.env.saltRounds);
 
   bcrypt.hash(password, saltRounds, (err, hash) => {
-    const newUser = new User({
+    const newUser = new user({
       Name: name,
       Email: email,
       Password: hash,
@@ -66,15 +66,15 @@ router.route("/signup").post(async (req, res) => {
         .catch((err) => res.status(400).json("Error: " + err));
     }
   });
-  const { accessToken, refreshToken } = generateTokens(User._id);
-  await storeRefreshToken(User._id, refreshToken);
+  const { accessToken, refreshToken } = generateTokens(user._id);
+  await storeRefreshToken(user._id, refreshToken);
   setCookies(res, accessToken, refreshToken);
 });
 
 router.route("/login").post(async (req, res) => {
   try {
     const { email, password } = req.body;
-    await User.findOne({ Email: email }).then((foundUser) => {
+    await user.findOne({ Email: email }).then((foundUser) => {
       if (!foundUser) {
         console.error(err);
         res.status(401).json({ message: "Login failed" });
