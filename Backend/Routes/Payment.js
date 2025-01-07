@@ -197,3 +197,4 @@ app.post('/pay/redirect', async (req, res) => {
 });
 
 
+model.exports = router;
