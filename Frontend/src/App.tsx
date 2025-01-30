@@ -10,7 +10,7 @@ function App() {
       {/* Backround Gradient */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute inset-0">
-         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-slate-800 from-green-900"/>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-slate-800 from-green-900" />
         </div>
       </div>
 
@@ -21,7 +21,7 @@ function App() {
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/login" element={<LoginPage />} />
         </Routes>
-      </div> 
+      </div>
     </div>
   );
 }
