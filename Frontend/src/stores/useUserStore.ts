@@ -31,7 +31,18 @@ interface LoginResponse {
   };
 }
 
-export const useUserStore = create((set, get) => ({
+
+interface UserStore {
+  user: {name: string} | null;
+  loading: boolean;
+  checkingAuth: boolean;
+  signup: (data: SignupData) => Promise<void>;
+  login: (data: LoginData) => Promise<void>;
+  logout: () => Promise<void>;
+  checkAuth: () => Promise<void>;
+}
+
+export const useUserStore = create<UserStore>((set, get) => ({
   user: null,
   loading: false,
   checkingAuth: true,
@@ -96,10 +107,8 @@ export const useUserStore = create((set, get) => ({
   checkAuth: async () => {
     set({ checkingAuth: true });
     try {
-      const response = await axios.get("/Profile/getProfile");
-      if (response.data.success) {
-        set({ user: response.data.User, checkingAuth: false });
-      }
+      const response = await axios.get("Profile/getProfile", { withCredentials: true });
+      set({ user: response.data, checkingAuth: false });
     } catch (error) {
       set({ checkingAuth: false, user: null });
       console.log(error);

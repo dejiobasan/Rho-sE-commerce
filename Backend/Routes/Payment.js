@@ -1,9 +1,10 @@
 const router = require("express").Router();
-const open = require("open");
+// const open = require("open");
 const flw = require("../Lib/Flutterwave");
 const { protectRoute } = require("../Middleware/authMiddleware");
 let coupon = require("../Models/Coupon.js");
 const redis = require("../Lib/Redis.js");
+const express = require("express");
 const cors = require("cors");
 const app = express()
 
@@ -24,8 +25,7 @@ async function createNewCoupon(userId) {
 }
 
 router
-  .route(protectRoute, "/create-checkout-session")
-  .post(async (req, res) => {
+  .post("/create-checkout-session", protectRoute, async (req, res) => {
     try {
       const { products, couponCode } = req.body;
 
@@ -197,4 +197,4 @@ app.post('/pay/redirect', async (req, res) => {
 });
 
 
-model.exports = router;
+module.exports = router;

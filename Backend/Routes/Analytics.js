@@ -1,4 +1,4 @@
-const Router = require("express").Router();
+const router = require("express").Router();
 const express = require("express");
 const { protectRoute, adminRoute } = require("../Middleware/authMiddleware");
 const user = require("../Models/User");
@@ -7,7 +7,7 @@ const Order = require("../Models/Order");
 const app = express();
 
 
-router.route(protectRoute, adminRoute, "/getAnalytics").get(async (req, res) => {
+router.get("/getAnalytics", protectRoute, adminRoute, async (req, res) => {
     const getAnalyticsData = async () => {
         const totalUsers = await user.countDocuments();
         const totalProducts = await product.countDocuments();
@@ -96,4 +96,4 @@ router.route(protectRoute, adminRoute, "/getAnalytics").get(async (req, res) => 
     }
 });
 
-module.exports = Router;
+module.exports = router;

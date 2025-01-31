@@ -3,14 +3,12 @@ let product = require("../Models/Product.js");
 
 const router = require("express").Router();
 
-
-
-router.route(protectRoute, "/getCartProducts").get(async (req, res) => {
+router.get("/getCartProducts", protectRoute, async (req, res) => {
     try {
-        const products = await product.find({_id: {$in: req.user.cartItems}})
+        const products = await product.find({ _id: { $in: req.user.cartItems } });
         const cartItems = products.map(product => {
-            const item = req.user.CartItems.find(cartItem => cartItem.id === product.id);
-            return {...product.toJSON(), quantity: item.quantity}
+            const item = req.user.cartItems.find(cartItem => cartItem.id === product.id);
+            return { ...product.toJSON(), quantity: item.quantity };
         });
 
         res.json(cartItems);
@@ -20,8 +18,7 @@ router.route(protectRoute, "/getCartProducts").get(async (req, res) => {
     }
 });
 
-
-router.route(protectRoute, "/addToCart").post(async (req, res) => {
+router.post( "/addToCart", protectRoute, async (req, res) => {
     try {
         const { productId } = req.body;
         const user = req.user;
@@ -41,7 +38,7 @@ router.route(protectRoute, "/addToCart").post(async (req, res) => {
     }
 });
 
-router.route(protectRoute, "/removeAllFromCart").delete(async (req, res) => {
+router.delete("/removeAllFromCart", protectRoute, async (req, res) => {
     try {
         const { productId } = req.body;
         const user = req.user;
@@ -57,7 +54,7 @@ router.route(protectRoute, "/removeAllFromCart").delete(async (req, res) => {
     }
 });
 
-router.route(protectRoute, "/updateQuantity").put(async (req, res) => {
+router.put("/updateQuantity", protectRoute, async (req, res) => {
     try {
         const { id: productId } = req.body;
         const{ quantity } = req.body;
@@ -81,3 +78,5 @@ router.route(protectRoute, "/updateQuantity").put(async (req, res) => {
         res.status(500).json({ message: "Error in the updateQuantity Controller" });
     }
 });
+
+module.exports = router;

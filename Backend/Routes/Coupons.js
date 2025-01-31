@@ -3,7 +3,7 @@ let coupon = require("../Models/Coupon.js")
 
 const router = require("express").Router();
 
-router.route(protectRoute, "/getCoupon").get(async (req, res) => {
+router.get("/getCoupon", protectRoute, async (req, res) => {
     try {
         const Coupon = await coupon.findOne({userId: req.user._id, isActive: true});
         res.json(Coupon || null);
@@ -12,7 +12,7 @@ router.route(protectRoute, "/getCoupon").get(async (req, res) => {
     }
 });
 
-router.route(protectRoute, "/validateCoupon").get(async (req, res) => {
+router.get("/validateCoupon", protectRoute, async (req, res) => {
     try {
         const { code } = req.body;
         const Coupon = await coupon.findOne({code: code, userId: req.user._id, isActive: true});
@@ -34,3 +34,5 @@ router.route(protectRoute, "/validateCoupon").get(async (req, res) => {
         res.status(500).json({ message: "Error validating coupon" , error: error.message})
     }
 })
+
+module.exports = router;

@@ -163,8 +163,8 @@ router.route("/refresh-token").post(async (req, res) => {
   }
 });
 
-// router.route("/profile").get((req, res) => { implement later...
-
+// router.route("/profile").get((req, res) => {
+//   console.log("Profile Route");
 // })
 
 module.exports = router;

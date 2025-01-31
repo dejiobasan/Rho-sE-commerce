@@ -6,3 +6,22 @@ Content-Type: application/json
     "email": "dejiobasan@yahoo.com",
     "password": "QWERTY"
 }
+
+###
+
+POST http://localhost:8000/Users/login
+Content-Type: application/json
+
+{
+    "email": "dejiobasan@yahoo.com",
+    "password": "QWERTY"
+}
+
+###
+POST http://localhost:8000/Users/logout
+Content-Type: application/json
+
+###
+
+GET http://localhost:8000/Profile/getProfile
+Content-Type: application/json

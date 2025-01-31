@@ -4,60 +4,58 @@ const redis = require("../Lib/Redis.js");
 const cloudinary = require("../Lib/Cloudinary.js");
 const { protectRoute, adminRoute } = require("../Middleware/authMiddleware.js");
 
-router
-  .route(protectRoute, adminRoute, "/getAllproducts")
-  .get(async (req, res) => {
-    try {
-      const Products = await product.find({});
-      res.json({ Products });
-    } catch (error) {
-      console.log("Error in getAllproducts Controller", error);
-      res.status(500).json({ message: error.message });
-    }
-  });
+router.get("/getAllproducts", protectRoute, adminRoute, async (req, res) => {
+  try {
+    const Products = await product.find({});
+    res.json({ Products });
+  } catch (error) {
+    console.log("Error in getAllproducts Controller", error);
+    res.status(500).json({ message: error.message });
+  }
+});
 
-router
-  .route(protectRoute, adminRoute, "/createProduct")
-  .post(async (req, res) => {
-    try {
-      const { name, description, price, image, category } = req.body;
+router.post("/createProduct", protectRoute, adminRoute, async (req, res) => {
+  try {
+    const { name, description, price, image, category } = req.body;
 
-      let cloudinaryResponse = null;
+    let cloudinaryResponse = null;
 
-      if (image) {
-        cloudinaryResponse = await cloudinary.uploader.upload(image, {
-          folder: "Products",
-        });
-      }
-
-      const newProduct = new product({
-        Name: name,
-        Description: description,
-        Price: price,
-        Image: cloudinaryResponse?.secure_url
-          ? cloudinaryResponse.secure_url
-          : null,
-        Category: category,
+    if (image) {
+      cloudinaryResponse = await cloudinary.uploader.upload(image, {
+        folder: "Products",
       });
-      if (err) {
-        console.log(err);
-      } else {
-        await newProduct
-          .save()
-          .then(() => {
-            res.json({ message: "Product created successfully!" });
-          })
-          .catch((err) => res.status(400).json("Error: " + err));
-      }
-    } catch (error) {
-      console.log("Error in createProducts Controller", error);
-      res.status(500).json({ message: error.message });
     }
-  });
 
-router
-  .route(protectRoute, adminRoute, "/deleteProduct/:id")
-  .delete(async (req, res) => {
+    const newProduct = new product({
+      Name: name,
+      Description: description,
+      Price: price,
+      Image: cloudinaryResponse?.secure_url
+        ? cloudinaryResponse.secure_url
+        : null,
+      Category: category,
+    });
+    if (err) {
+      console.log(err);
+    } else {
+      await newProduct
+        .save()
+        .then(() => {
+          res.json({ message: "Product created successfully!" });
+        })
+        .catch((err) => res.status(400).json("Error: " + err));
+    }
+  } catch (error) {
+    console.log("Error in createProducts Controller", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.delete(
+  "/deleteProduct/:id",
+  protectRoute,
+  adminRoute,
+  async (req, res) => {
     try {
       const product = await product.findById(req.params.id);
 
@@ -81,7 +79,8 @@ router
       console.log("Error in deleteProduct Controller", error);
       res.status(500).json({ message: error.message });
     }
-  });
+  }
+);
 
 router.route("/getFeaturedProducts").get(async (req, res) => {
   try {
@@ -127,26 +126,26 @@ router.route("/category/:Category").get(async (req, res) => {
   }
 });
 
-router.route("/toggleFeaturedProduct/:id").patch(async (req, res) => { 
+router.route("/toggleFeaturedProduct/:id").patch(async (req, res) => {
   try {
     const product = await product.findById(req.params.id);
-    if(product) {
+    if (product) {
       product.isFeatured = !product.isFeatured;
       const updatedProduct = await product.save();
       await updateFeaturedProductCache();
       res.json(updatedProduct);
     } else {
-      res.status(404).json({message: "Product not found! "});
+      res.status(404).json({ message: "Product not found! " });
     }
   } catch (error) {
     console.log("Error in the toogleFeaturedProduct controller", error.message);
-    res.status(500).json({ message: "Server Error", error: error.message })
+    res.status(500).json({ message: "Server Error", error: error.message });
   }
 });
 
 async function updateFeaturedProductCache() {
   try {
-    const featuredProducts = await product.find({ isFeatured: true }).lean();//lean() returns plain JavaScript
+    const featuredProducts = await product.find({ isFeatured: true }).lean(); //lean() returns plain JavaScript
     await redis.set("featured_products", JSON.stringify(featuredProducts));
   } catch (error) {
     console.log("Error in updateFeaturedProductCache", error);

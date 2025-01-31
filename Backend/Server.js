@@ -8,7 +8,10 @@ const app = express();
 require("dotenv").config();
 const port = Number(process.env.PORT);
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173", // allow to server to accept request from different origin
+  credentials: true,
+}));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -24,7 +27,7 @@ connection.once("open", () => {
 const UserRouter = require("./Routes/Users");
 const ProductRouter = require("./Routes/Products");
 const CartRouter = require("./Routes/Carts");
-const CouponRouter = require("./Routes.Coupons");
+const CouponRouter = require("./Routes/Coupons");
 const PaymentRouter = require("./Routes/Payment");
 const AnalyticsRouter = require("./Routes/Analytics");
 const ProfileRouter = require("./Routes/Profile");
