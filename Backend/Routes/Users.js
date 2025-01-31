@@ -124,7 +124,7 @@ router.route("/logout").post(async (req, res) => {
     }
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
-    res.json({ message: "Logged out successfully" });
+    res.status(200).json({ success: true, message: "Logged out successfully" });
   } catch (error) {
     console.log("Error in Login Controller", error);
     res.status(500).json({ message: "Server Error!", error: error.message });
