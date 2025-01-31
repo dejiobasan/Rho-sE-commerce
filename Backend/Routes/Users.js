@@ -61,7 +61,14 @@ router.route("/signup").post(async (req, res) => {
       newUser
         .save()
         .then(() => {
-          res.json("User created successfully!");
+          res.status(200).json({
+            success: true,
+            message: "User added!",
+            User: {
+              Name: name,
+              Email: email,
+            },
+          });
         })
         .catch((err) => res.status(400).json("Error: " + err));
     }

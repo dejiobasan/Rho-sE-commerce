@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { LogIn, Mail, Lock, ArrowRight, Loader } from "lucide-react";
+import { useUserStore } from "../stores/useUserStore";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -9,11 +10,16 @@ const LoginPage = () => {
     password: "",
   });
 
-  const loading = false;
+  const { login, loading } = useUserStore();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formData);
+    try {
+      await login(formData);
+    } catch (error) {
+      console.error("Login failed", error);
+    }
   };
 
   const HandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
