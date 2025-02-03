@@ -2,6 +2,11 @@ import { create } from "zustand";
 import axios from "../lib/axios";
 import { toast } from "react-hot-toast";
 
+interface User {
+  name: string;
+  email: string;
+  role: string;
+}
 interface SignupData {
   name: string;
   email: string;
@@ -15,6 +20,7 @@ interface SignupResponse {
   User: {
     name: string;
     email: string;
+    role: string;
   };
 }
 
@@ -28,12 +34,19 @@ interface LoginResponse {
   message: string;
   User: {
     name: string;
+    email: string;
+    role: string;
   };
+}
+
+interface LogoutResponse {
+  success: boolean;
+  message: string;
 }
 
 
 interface UserStore {
-  user: {name: string} | null;
+  user: User | null;
   loading: boolean;
   checkingAuth: boolean;
   signup: (data: SignupData) => Promise<void>;
@@ -91,7 +104,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
   logout: async () => {
     try {
-      const response = await axios.post("/Users/logout");
+      const response = await axios.post<LogoutResponse>("/Users/logout");
       if (response.data.success) {
         set({ user: null });
         toast.success(response.data.message);
