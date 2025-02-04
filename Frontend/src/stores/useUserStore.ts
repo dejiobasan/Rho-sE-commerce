@@ -3,9 +3,10 @@ import axios from "../lib/axios";
 import { toast } from "react-hot-toast";
 
 interface User {
-  name: string;
-  email: string;
-  role: string;
+  id: string;
+  Name: string;
+  Email: string;
+  Role: string;
 }
 interface SignupData {
   name: string;
@@ -18,9 +19,10 @@ interface SignupResponse {
   success: boolean;
   message: string;
   User: {
-    name: string;
-    email: string;
-    role: string;
+    id: string;
+    Name: string;
+    Email: string;
+    Role: string;
   };
 }
 
@@ -33,9 +35,10 @@ interface LoginResponse {
   success: boolean;
   message: string;
   User: {
-    name: string;
-    email: string;
-    role: string;
+    id: string;
+    Name: string;
+    Email: string;
+    Role: string;
   };
 }
 

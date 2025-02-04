@@ -65,8 +65,10 @@ router.route("/signup").post(async (req, res) => {
             success: true,
             message: "User added!",
             User: {
+              id: user._id,
               Name: name,
               Email: email,
+              Role: role,
             },
           });
         })
@@ -98,7 +100,10 @@ router.route("/login").post(async (req, res) => {
                 success: true,
                 message: "Login Successful!",
                 User: {
+                  id: foundUser._id,
                   Name: foundUser.Name,
+                  Email: foundUser.Email,
+                  Role: foundUser.Role,
                 },
               });
             }
