@@ -58,7 +58,7 @@ interface UserStore {
   checkAuth: () => Promise<void>;
 }
 
-export const useUserStore = create<UserStore>((set, get) => ({
+export const useUserStore = create<UserStore>((set) => ({
   user: null,
   loading: false,
   checkingAuth: true,

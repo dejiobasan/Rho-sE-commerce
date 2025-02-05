@@ -35,16 +35,8 @@ router.post("/createProduct", protectRoute, adminRoute, async (req, res) => {
         : null,
       Category: category,
     });
-    if (err) {
-      console.log(err);
-    } else {
-      await newProduct
-        .save()
-        .then(() => {
-          res.json({ message: "Product created successfully!" });
-        })
-        .catch((err) => res.status(400).json("Error: " + err));
-    }
+    await newProduct.save();
+    res.status(201).json(newProduct);
   } catch (error) {
     console.log("Error in createProducts Controller", error);
     res.status(500).json({ message: error.message });

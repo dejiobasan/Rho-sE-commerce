@@ -30,7 +30,7 @@ const protectRoute = async (req, res, next) => {
 }
 
 const adminRoute = ((req, res, next) => {
-   if(req.user && req.user.role === "admin") {
+   if(req.user && req.user.Role === "Admin") {
     next()
    } else {
     return res.status(403).json({ message: 'Forbidden - Only admins can access this route!'})

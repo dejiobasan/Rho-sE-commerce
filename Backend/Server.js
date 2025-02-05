@@ -12,7 +12,7 @@ app.use(cors({
   origin: "http://localhost:5173", // allow to server to accept request from different origin
   credentials: true,
 }));
-app.use(express.json());
+app.use(express.json({limit: "10mb"}));
 app.use(cookieParser());
 
 mongoose.connect(process.env.BusinessDB, {
