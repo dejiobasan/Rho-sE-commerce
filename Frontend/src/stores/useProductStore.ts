@@ -23,6 +23,7 @@ interface productStore {
   products: Product[];
   loading: boolean;
   createProduct: (data: productData) => Promise<void>;
+  fetchAllProducts: () => Promise<void>;
 }
 
 
@@ -45,5 +46,25 @@ export const useProductStore = create<productStore>((set) => ({
         toast.error("An error occurred");
         set({ loading: false });
     }
+  },
+
+  fetchAllProducts: async () => {
+    set({loading: true});
+    try {
+        const response = await axios.get("/Products/getAllProducts");
+        set({ products: response.data.Products, loading: false})
+    } catch (error) {
+        set({ loading: false });
+        console.error(error);
+        toast.error("An error occured");
+    }
+  },
+
+  deleteproduct: async () => {
+
+  },
+
+  toggleFeaturedProduct: async () => { 
+
   }
 }));
