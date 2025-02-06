@@ -1,9 +1,10 @@
 import { BarChart, PlusCircle, ShoppingBasket } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion";
 import AnalyticsTab from "../Components/AnalyticsTab";
 import CreateProductForm from "../Components/CreateProductForm";
 import ProductsList from "../Components/ProductsList";
+import { useProductStore } from "../stores/useProductStore";
 
 
 
@@ -16,6 +17,11 @@ const tabs = [
 const AdminPage = () => {
 
   const [activeTab, setActiveTab] = useState("create")
+  const{ fetchAllProducts } = useProductStore();
+
+  useEffect(() => {
+    fetchAllProducts();
+  }, [fetchAllProducts]);
 
 
   return (

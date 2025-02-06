@@ -49,14 +49,14 @@ router.delete(
   adminRoute,
   async (req, res) => {
     try {
-      const product = await product.findById(req.params.id);
+      const binProduct = await product.findById(req.params.id);
 
-      if (!product) {
+      if (!binProduct) {
         return res.status(404).json({ message: "Product not found" });
       }
 
-      if (product.image) {
-        const publicId = product.image.split("/").pop().split(".")[0];
+      if (binProduct.Image) {
+        const publicId = binProduct.Image.split("/").pop().split(".")[0];
         try {
           await cloudinary.uploader.destroy(`Products/${publicId}`);
           console.log("deleted image from cloudinary");
@@ -120,10 +120,10 @@ router.route("/category/:Category").get(async (req, res) => {
 
 router.route("/toggleFeaturedProduct/:id").patch(async (req, res) => {
   try {
-    const product = await product.findById(req.params.id);
-    if (product) {
-      product.isFeatured = !product.isFeatured;
-      const updatedProduct = await product.save();
+    const neededProduct = await product.findById(req.params.id);
+    if (neededProduct) {
+      neededProduct.isFeatured = !neededProduct.isFeatured;
+      const updatedProduct = await neededProduct.save();
       await updateFeaturedProductCache();
       res.json(updatedProduct);
     } else {
