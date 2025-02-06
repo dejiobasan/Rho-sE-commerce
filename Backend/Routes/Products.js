@@ -112,7 +112,7 @@ router.route("/category/:Category").get(async (req, res) => {
   const { Category } = req.params;
   try {
     const products = await product.find({ Category });
-    res.json(products);
+    res.json({ products });
   } catch (error) {
     console.log("Error in category Controller", error);
   }

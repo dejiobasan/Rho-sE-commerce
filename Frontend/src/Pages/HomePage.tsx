@@ -4,10 +4,10 @@ import  CategoryItem  from "../Components/CategoryItem"
 const categories = [
   {href: "/Perfume", name: "Saviour", imageUrl: "../Perfume-Images/Perfume1.jpeg"},
   {href: "/Perfume", name: "Osma", imageUrl: "../Perfume-Images/Perfume2.jpeg"},
-  {href: "/Perfume", name: "Imperial", imageUrl: "../Perfume-Images/Perfume3.jpeg"},
-  {href: "/Perfume", name: "Emporior Armani", imageUrl: "../Perfume-Images/Perfume4.jpeg"},
-  {href: "/Perfume", name: "Al-Faajir", imageUrl: "../Perfume-Images/Perfume5.jpeg"},
-  {href: "/Perfume", name: "Oudh", imageUrl: "../Perfume-Images/Perfume6.jpeg"},
+  {href: "/Clothes", name: "Denim Jacket", imageUrl: "../Clothes-Images/Clothes.jpeg"},
+  {href: "/Spray", name: "Right Guard", imageUrl: "../Spray-Images/Spray.jpeg"},
+  {href: "/Shoe", name: "Travis Nike Air", imageUrl: "../Shoe-Images/Shoe.jpeg"},
+  {href: "/Jewelry", name: "Black Ring", imageUrl: "../Jewelry-Images/ring.jpeg"},
 ]
 
 

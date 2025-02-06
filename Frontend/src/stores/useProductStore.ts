@@ -27,6 +27,7 @@ interface productStore {
   fetchAllProducts: () => Promise<void>;
   deleteProduct: (productId: string) => Promise<void>;
   toggleFeaturedProduct: (productId: string) => Promise<void>;
+  fetchProductsByCategory: (category: string) => Promise<void>;
 }
 
 
@@ -56,6 +57,18 @@ export const useProductStore = create<productStore>((set) => ({
     try {
         const response = await axios.get("/Products/getAllProducts");
         set({ products: response.data.Products, loading: false})
+    } catch (error) {
+        set({ loading: false });
+        console.error(error);
+        toast.error("An error occured");
+    }
+  },
+
+  fetchProductsByCategory: async (category) => {
+    set({ loading: true });
+    try {
+        const response = await axios.get(`/Products/category/${category}`);
+        set({ products: response.data.products, loading: false });
     } catch (error) {
         set({ loading: false });
         console.error(error);
