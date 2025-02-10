@@ -1,42 +1,76 @@
 import { create } from "zustand";
 import axios from "../lib/axios";
 import { toast } from "react-hot-toast";
-import { data } from "react-router-dom";
 
 interface Cart {
-  id: string;
+  _id: string;
+  quantity: number;
+  Price: number;
+}
+
+interface Coupon {
+  code: string;
+  discountPercentage: number;
+}
+
+interface Product {
+  _id: string;
+  Price: number;
 }
 
 interface cartStore {
   cart: Cart[];
+  coupon: Coupon | null;
+  product: Product[];
   loading: boolean;
   getCartItems: () => Promise<void>;
+  addToCart: (product: Product) => Promise<void>;
+  calculateTotalAmount: () => number;
 }
 
 export const useCartStore = create<cartStore>((set, get) => ({
   cart: [],
+  product: [],
   coupon: null,
-  total: 0,
-  subtotal: 0,
   loading: false,
 
   getCartItems: async () => {
+    set({ loading: true });
     try {
       const response = await axios.get("/Carts/getCartProducts");
-      set({ cart: response.data });
+      set({ cart: response.data, loading: false });
+      get().calculateTotalAmount();
     } catch (error) {
-      set({ cart: [] });
-      console.error(error);
-      toast.error("An error occurred");
+      console.error("Error fetching cart items", error);
+      toast.error("Error fetching cart items");
       set({ loading: false });
     }
   },
 
-  addToCart: async(product) => {
+  addToCart: async (product: Product) => {
+    set({ loading: true });
     try {
-        
+      await axios.post("/Carts/addToCart", { productId: product._id });
+      set((state) => ({
+        cart: [...state.cart, { ...product, quantity: 1 }],
+        loading: false,
+      }));
+      get().calculateTotalAmount();
+      toast.success("Product added to cart");
     } catch (error) {
-        
+      console.error("Error adding product to cart", error);
+      toast.error("Error adding product to cart");
+      set({ loading: false });
     }
-  }
+  },
+
+  calculateTotalAmount: () => {
+    const { cart, coupon } = get();
+    let total = cart.reduce((sum, item) => sum + item.Price * item.quantity, 0);
+    if (coupon) {
+      total = total - (total * coupon.discountPercentage) / 100;
+    }
+    return total;
+  },
+
 }));

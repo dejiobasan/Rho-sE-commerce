@@ -6,7 +6,7 @@ interface Product {
     _id: string;
     Name: string;
     Description: string;
-    Price: string;
+    Price: number;
     Category: string;
     Image: string;// URL
     isFeatured: boolean;
@@ -15,7 +15,7 @@ interface Product {
 interface productData {
     name: string;
     description: string;
-    price: string;
+    price: number;
     category: string;
     image: string;
 }
