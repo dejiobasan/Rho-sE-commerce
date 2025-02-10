@@ -1,16 +1,16 @@
 const { protectRoute } = require("../Middleware/authMiddleware");
-const Product = require("../Models/Product.js");
+const product = require("../Models/Product.js");
 const User = require("../Models/User.js");
 
 const router = require("express").Router();
 
 router.get("/getCartProducts", protectRoute, async (req, res) => {
     try {
-        const products = await product.find({ _id: { $in: req.user.cartItems } });
-        const cartItems = products.map(product => {
-            const item = req.user.cartItems.find(cartItem => cartItem.id === product.id);
-            return { ...product.toJSON(), quantity: item.quantity };
-        });
+        const user = await User.findById(req.user.id);
+        const cartItems = user.CartItems.map((item) => ({
+            ...item.product.toJSON(),
+            quantity: item.quantity,
+          }));
 
         res.json(cartItems);
     } catch (error) {
@@ -23,7 +23,7 @@ router.post( "/addToCart", protectRoute, async (req, res) => {
     try {
         const { productId } = req.body;
         const user = await User.findById(req.user.id);
-        const product = await Product.findById(productId);
+        const product = await product.findById(productId);
         if (!product) {
             return res.status(404).json({ message: "Product not found" });
         }
