@@ -4,8 +4,11 @@ import { toast } from "react-hot-toast";
 
 interface Cart {
   _id: string;
+  Name: string;
+  Description: string;
   quantity: number;
   Price: number;
+  Image: string;
 }
 
 interface Coupon {
@@ -16,6 +19,9 @@ interface Coupon {
 interface Product {
   _id: string;
   Price: number;
+  Image: string;
+  Name: string;
+  Description: string;
 }
 
 interface cartStore {
@@ -26,6 +32,8 @@ interface cartStore {
   getCartItems: () => Promise<void>;
   addToCart: (product: Product) => Promise<void>;
   calculateTotalAmount: () => number;
+  updateQuantity: (productId: string, quantity: number) => Promise<void>;
+  removeFromCart: (productId: string) => Promise<void>;
 }
 
 export const useCartStore = create<cartStore>((set, get) => ({
@@ -72,5 +80,25 @@ export const useCartStore = create<cartStore>((set, get) => ({
     }
     return total;
   },
+
+  removeFromCart: async (productId) => {
+    await axios.delete("/Carts/removeAllFromCart", {data: { productId }});
+    set((state) => ({ cart: state.cart.filter((item) => item._id !== productId) }));
+    get().calculateTotalAmount();
+  },
+
+  updateQuantity: async (productId, quantity) => {
+    set ({ loading: true });
+    try {
+      const response = await axios.put(`/Carts/updateQuantity/${productId}`, { quantity });
+      set({cart: response.data,loading: false});
+      get().calculateTotalAmount();
+      toast.success("Cart updated successfully");
+    } catch (error) {
+      console.error("Error updating cart quantity", error);
+      toast.error("Error updating cart quantity");
+      set({ loading: false });
+    }
+  }
 
 }));
