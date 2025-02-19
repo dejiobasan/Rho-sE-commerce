@@ -29,6 +29,9 @@ interface cartStore {
   coupon: Coupon | null;
   product: Product[];
   loading: boolean;
+  total: number;
+  subtotal: number;
+  isCouponApplied: boolean;
   getCartItems: () => Promise<void>;
   addToCart: (product: Product) => Promise<void>;
   calculateTotalAmount: () => number;
@@ -41,6 +44,9 @@ export const useCartStore = create<cartStore>((set, get) => ({
   product: [],
   coupon: null,
   loading: false,
+  total: 0,
+  subtotal: 0,
+  isCouponApplied: false,
 
   getCartItems: async () => {
     set({ loading: true });
@@ -72,13 +78,16 @@ export const useCartStore = create<cartStore>((set, get) => ({
     }
   },
 
-  calculateTotalAmount: () => {
+  calculateTotalAmount: (): number => {
     const { cart, coupon } = get();
-    let total = cart.reduce((sum, item) => sum + item.Price * item.quantity, 0);
+    const total = cart.reduce((sum, item) => sum + item.Price * item.quantity, 0);
+    set({ total });
+    let subtotal = total;
     if (coupon) {
-      total = total - (total * coupon.discountPercentage) / 100;
+      subtotal = total - (total * coupon.discountPercentage) / 100;
     }
-    return total;
+    set({ subtotal });
+    return subtotal;
   },
 
   removeFromCart: async (productId) => {
