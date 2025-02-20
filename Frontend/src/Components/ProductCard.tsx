@@ -8,6 +8,7 @@ interface Product {
   Image: string;
   Name: string;
   Price: number;
+  Description: string;
 }
 
 const ProductCard = ({ product }: { product: Product }) => {

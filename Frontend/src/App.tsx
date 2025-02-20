@@ -6,6 +6,7 @@ import Navbar from "./Components/Navbar";
 import AdminPage from "./Pages/AdminPage";
 import CartPage from "./Pages/CartPage";
 import CategoryPage from "./Pages/CategoryPage";
+import PaymentPage from "./Pages/PaymentPage";
 import { Toaster } from "react-hot-toast";
 import { useUserStore } from "./stores/useUserStore";
 import { useCartStore } from "./stores/useCartStore";
@@ -21,8 +22,9 @@ function App() {
   }, [checkAuth]);
 
   useEffect(() => {
+    if (!user) return;
     getCartItems();
-  },  [getCartItems]);
+  }, [getCartItems, user]);
 
   if (checkingAuth) return <LoadingSpinner />;
 
@@ -39,11 +41,26 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/signup" element={!user ? <SignUpPage /> : <Navigate to='/' />} />
-          <Route path="/login" element={!user ? <LoginPage/> : <Navigate to='/' />} />
-          <Route path="/secret-dashboard" element={user?.Role === "Admin" ? <AdminPage /> : <Navigate to='/login' />} />
+          <Route
+            path="/signup"
+            element={!user ? <SignUpPage /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/login"
+            element={!user ? <LoginPage /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/secret-dashboard"
+            element={
+              user?.Role === "Admin" ? <AdminPage /> : <Navigate to="/login" />
+            }
+          />
           <Route path="/category/:category" element={<CategoryPage />} />
-          <Route path="/cart" element={user ? <CartPage /> : <Navigate to='/login' />} />
+          <Route
+            path="/cart"
+            element={user ? <CartPage /> : <Navigate to="/login" />}
+          />
+          <Route path="/payment" element={user ? <PaymentPage /> : <Navigate to="/login"/>}/>
         </Routes>
       </div>
       <Toaster />

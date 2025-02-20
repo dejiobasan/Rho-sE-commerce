@@ -5,6 +5,7 @@ import EmptyCartUI from "../Components/EmptyCartUI";
 import CartItem from "../Components/CartItem";
 import PeopleAlsoBought from "../Components/PeopleAlsoBought";
 import OrderSummary from "../Components/OrderSummary";
+import GiftCouponCard from "../Components/GiftCouponCard";
 
 
 const CartPage = () => {
@@ -39,8 +40,7 @@ const CartPage = () => {
             transition={{ duration: 0.5, delay: 0.4 }}
             >
               <OrderSummary />
-              {/* <GiftCouponCard /> */}
-              
+              <GiftCouponCard />
             </motion.div>
           )}
         </div>

@@ -16,6 +16,10 @@ interface Coupon {
   discountPercentage: number;
 }
 
+interface codeData {
+  code: string;
+}
+
 interface Product {
   _id: string;
   Price: number;
@@ -32,11 +36,14 @@ interface cartStore {
   total: number;
   subtotal: number;
   isCouponApplied: boolean;
+  getMyCoupon: () => Promise<void>;
   getCartItems: () => Promise<void>;
   addToCart: (product: Product) => Promise<void>;
   calculateTotalAmount: () => number;
   updateQuantity: (productId: string, quantity: number) => Promise<void>;
   removeFromCart: (productId: string) => Promise<void>;
+  applyCoupon: (data: codeData) => Promise<void>;
+  removeCoupon: () => Promise<void>;
 }
 
 export const useCartStore = create<cartStore>((set, get) => ({
@@ -47,6 +54,33 @@ export const useCartStore = create<cartStore>((set, get) => ({
   total: 0,
   subtotal: 0,
   isCouponApplied: false,
+
+  getMyCoupon: async () => {
+    try {
+      const response = await axios.get("/Coupons/getCoupon");
+      set({ coupon: response.data});
+    } catch (error) {
+      console.error("error fetching coupon:", error);
+    }
+  },
+
+  applyCoupon: async (data: codeData) => {
+		try {
+			const response = await axios.post("/Coupons/validateCoupon", { data });
+			set({ coupon: response.data, isCouponApplied: true });
+			get().calculateTotalAmount();
+			toast.success("Coupon applied successfully");
+		} catch (error) {
+      console.log(error);
+			toast.error("Failed to apply coupon");
+		}
+	},
+
+  removeCoupon: async () => {
+    set({ coupon: null, isCouponApplied: false });
+    get().calculateTotalAmount();
+    toast.success("Coupon removed");
+  },
 
   getCartItems: async () => {
     set({ loading: true });

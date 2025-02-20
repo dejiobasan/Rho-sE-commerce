@@ -1,15 +1,27 @@
 import { motion } from "framer-motion";
 import { useCartStore } from "../stores/useCartStore";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MoveRight } from "lucide-react";
+import axios from "../lib/axios";
+
 
 const OrderSummary = () => {
-  const { total, subtotal, coupon, isCouponApplied } = useCartStore();
-
+  const { total, subtotal, coupon, isCouponApplied, cart } = useCartStore();
+  const navigate = useNavigate();
   const savings = subtotal - total;
   const formattedSubtotal = subtotal.toFixed(2);
   const formattedTotal = total.toFixed(2);
   const formattedSavings = savings.toFixed(2);
+
+  const handleCheckout = async () => {
+    try {
+      const response = await axios.post("/Payments/create-checkout-session", {products: cart, couponCode: coupon ? coupon.code : null});
+      console.log(response.data)
+      navigate("/payment", {state: {amount: response.data.Amount}});
+    } catch (error) {
+      console.error("Error during checkout", error);
+    }
+	};
 
   return (
     <motion.div
@@ -63,6 +75,7 @@ const OrderSummary = () => {
           focus:ring-emerald-300"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={handleCheckout}
           >
             Proceed to checkout
           </motion.button>
