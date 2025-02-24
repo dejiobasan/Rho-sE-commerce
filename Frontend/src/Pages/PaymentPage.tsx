@@ -1,6 +1,7 @@
 import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v3";
 import { useLocation } from "react-router-dom";
 import { useUserStore } from "../stores/useUserStore";
+import { Navigate } from "react-router-dom";
 
 const PaymentPage = () => {
   const location = useLocation();
@@ -45,7 +46,7 @@ const PaymentPage = () => {
       name: user?.Name || "",
     },
     customizations: {
-      title: "My store",
+      title: "Rho's Essence and More.",
       description: "Payment for items in cart",
       logo: "https://st2.depositphotos.com/4403291/7418/v/450/depositphotos_74189661-stock-illustration-online-shop-log.jpg",
     },
@@ -56,9 +57,10 @@ const PaymentPage = () => {
     text: "Pay with Flutterwave!",
     callback: (response) => {
       console.log(response);
-      closePaymentModal(); // this will close the modal programmatically
+      closePaymentModal();
+      <Navigate to="/purchase-success" /> // this will close the modal programmatically
     },
-    onClose: () => {},
+    onClose: () => {<Navigate to="/purchase-cancel" />},
   };
 
   return (

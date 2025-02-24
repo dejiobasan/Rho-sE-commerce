@@ -38,6 +38,7 @@ interface cartStore {
   isCouponApplied: boolean;
   getMyCoupon: () => Promise<void>;
   getCartItems: () => Promise<void>;
+  clearCart: () => Promise<void>;
   addToCart: (product: Product) => Promise<void>;
   calculateTotalAmount: () => number;
   updateQuantity: (productId: string, quantity: number) => Promise<void>;
@@ -94,6 +95,10 @@ export const useCartStore = create<cartStore>((set, get) => ({
       set({ loading: false });
     }
   },
+
+  clearCart: async () => {
+		set({ cart: [], coupon: null, total: 0, subtotal: 0 });
+	},
 
   addToCart: async (product: Product) => {
     set({ loading: true });
