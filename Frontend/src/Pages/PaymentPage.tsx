@@ -1,12 +1,13 @@
 import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v3";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useUserStore } from "../stores/useUserStore";
-import { Navigate } from "react-router-dom";
+
 
 const PaymentPage = () => {
   const location = useLocation();
   const { amount } = location.state || { amount: 0 };
   const { user } = useUserStore();
+  const navigate = useNavigate();
 
   interface Customer {
     email: string;
@@ -56,11 +57,18 @@ const PaymentPage = () => {
     ...config,
     text: "Pay with Flutterwave!",
     callback: (response) => {
-      console.log(response);
-      closePaymentModal();
-      <Navigate to="/purchase-success" /> // this will close the modal programmatically
+      if (response.status !== "completed") {
+        console.log("Transaction was not completed!");
+      } else {
+        navigate("/purchase-success");
+        console.log("Transaction was successful!");
+      };
+      closePaymentModal();// this will close the modal programmatically
     },
-    onClose: () => {<Navigate to="/purchase-cancel" />},
+    onClose: () => {
+      navigate("/purchase-cancel");
+      console.log("Transaction was closed!");
+    },
   };
 
   return (
