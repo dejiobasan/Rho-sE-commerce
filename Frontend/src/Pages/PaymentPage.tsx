@@ -1,6 +1,8 @@
 import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v3";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUserStore } from "../stores/useUserStore";
+import axios from "../lib/axios";
+import { useCartStore } from "../stores/useCartStore";
 
 
 const PaymentPage = () => {
@@ -8,6 +10,7 @@ const PaymentPage = () => {
   const { amount } = location.state || { amount: 0 };
   const { user } = useUserStore();
   const navigate = useNavigate();
+  const {  cart } = useCartStore();
 
   interface Customer {
     email: string;
@@ -56,10 +59,26 @@ const PaymentPage = () => {
   const fwConfig: FWConfig = {
     ...config,
     text: "Pay with Flutterwave!",
-    callback: (response) => {
+    callback: async (response) => {
       if (response.status !== "completed") {
         console.log("Transaction was not completed!");
       } else {
+        try {
+          await axios.post("/Payments/checkout-success", {
+            user: {
+              id: user?.id,
+            },
+            products: cart.map((product) => ({
+              id: product._id,
+              quantity: product.quantity,
+              Price: product.Price,
+            })),
+            totalAmount: amount,
+            flutterSessionId: response.transaction_id,
+          });
+        } catch (error) {
+          console.error("Error saving order:", error);
+        }
         navigate("/purchase-success");
         console.log("Transaction was successful!");
       };

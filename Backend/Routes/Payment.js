@@ -6,15 +6,17 @@ const redis = require("../Lib/Redis");
 const express = require("express");
 const cors = require("cors");
 const app = express();
+const Order = require("../Models/Order");
 
 app.use(cors());
 app.use(express.json());
 
 async function createNewCoupon(userId) {
+  await Coupon.findOneAndDelete({ userId });
   const newCoupon = new Coupon({
     code: "GIFT" + Math.random().toString(36).substring(2, 8).toUpperCase(),
     discountPercentage: 5,
-    expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     userId: userId,
   });
   await newCoupon.save();
@@ -62,7 +64,27 @@ router.post("/create-checkout-session", protectRoute, async (req, res) => {
     res.status(200).json({Amount: totalAmount});
   } catch (error) {
     console.error("Error in create-checkout-session controller", error.message);
-    res.status(500).json({ message: "Error in create-checkout-session controller" });
+    res.status(500).json({ message: "Error in create-checkout-session controller", error: error.message });
+  }
+});
+
+router.post("/checkout-success", protectRoute, async (req, res) => {
+  try {
+    const {user, products, totalAmount, flutterSessionId} = req.body;
+    const newOrder = new Order({
+      user: user._id,
+      products: products.map((product) => ({
+        product: product._id,
+        quantity: product.quantity,
+        price: product.Price,
+      })),
+      totalAmount,
+      flutterSessionId,
+    });
+    await newOrder.save();
+  } catch (error) {
+    console.error("Error in checkout-success controller", error.message);
+    res.status(500).json({ message: "Error in checkout-success controller", error: error.message });
   }
 });
 

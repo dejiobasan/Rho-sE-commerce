@@ -16,10 +16,6 @@ interface Coupon {
   discountPercentage: number;
 }
 
-interface codeData {
-  code: string;
-}
-
 interface Product {
   _id: string;
   Price: number;
@@ -40,10 +36,10 @@ interface cartStore {
   getCartItems: () => Promise<void>;
   clearCart: () => Promise<void>;
   addToCart: (product: Product) => Promise<void>;
-  calculateTotalAmount: () => number;
+  calculateTotalAmount: () => Promise<void>;
   updateQuantity: (productId: string, quantity: number) => Promise<void>;
   removeFromCart: (productId: string) => Promise<void>;
-  applyCoupon: (data: codeData) => Promise<void>;
+  applyCoupon: (code: string) => Promise<void>;
   removeCoupon: () => Promise<void>;
 }
 
@@ -58,16 +54,17 @@ export const useCartStore = create<cartStore>((set, get) => ({
 
   getMyCoupon: async () => {
     try {
-      const response = await axios.get("/Coupons/getCoupon");
+      const response = await axios.get("/Coupon/getCoupon");
       set({ coupon: response.data});
     } catch (error) {
       console.error("error fetching coupon:", error);
     }
   },
 
-  applyCoupon: async (data: codeData) => {
+  applyCoupon: async (code: string) => {
 		try {
-			const response = await axios.post("/Coupons/validateCoupon", { data });
+			const response = await axios.post("/Coupon/validateCoupon", { code });
+      console.log(response.data);
 			set({ coupon: response.data, isCouponApplied: true });
 			get().calculateTotalAmount();
 			toast.success("Coupon applied successfully");
@@ -117,16 +114,15 @@ export const useCartStore = create<cartStore>((set, get) => ({
     }
   },
 
-  calculateTotalAmount: (): number => {
+  calculateTotalAmount: async () => {
     const { cart, coupon } = get();
-    const total = cart.reduce((sum, item) => sum + item.Price * item.quantity, 0);
-    set({ total });
-    let subtotal = total;
+    const subtotal = cart.reduce((sum, item) => sum + item.Price * item.quantity, 0);
+    let total = subtotal;
     if (coupon) {
-      subtotal = total - (total * coupon.discountPercentage) / 100;
-      set({ subtotal });
+      const discount = subtotal * (coupon.discountPercentage / 100);
+      total = subtotal - discount;
     }
-    return subtotal;
+    set({ subtotal, total });
   },
 
   removeFromCart: async (productId) => {

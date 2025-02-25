@@ -12,23 +12,23 @@ router.get("/getCoupon", protectRoute, async (req, res) => {
     }
 });
 
-router.get("/validateCoupon", protectRoute, async (req, res) => {
+router.post("/validateCoupon", protectRoute, async (req, res) => {
     try {
         const { code } = req.body;
-        const Coupon = await coupon.findOne({code: code, userId: req.user._id, isActive: true});
-        if(!Coupon) {
+        const neededCoupon = await coupon.findOne({code: code, userId: req.user._id, isActive: true});
+        if(!neededCoupon) {
             return res.status(404).json({message: "Coupon not found!"});
         }
 
-        if(coupon.expirationDate < new Date()){
-            coupon.isActive = false;
-            await coupon.save();
+        if(neededCoupon.expiryDate < new Date()){
+            neededCoupon.isActive = false;
+            await neededCoupon.save();
             return res.status(404).json({message: "Coupon Expired!"});
         }
         res.json({
             message: "Coupon is valid",
-            code: coupon.code,
-            discountPercentage: coupon.discountPercentage
+            code: neededCoupon.code,
+            discountPercentage: neededCoupon.discountPercentage
         });
     } catch (error) {
         res.status(500).json({ message: "Error validating coupon" , error: error.message})

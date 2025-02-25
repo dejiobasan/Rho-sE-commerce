@@ -1,4 +1,8 @@
 import  CategoryItem  from "../Components/CategoryItem"
+import { useProductStore } from "../stores/useProductStore";
+import FeaturedProducts from "../Components/FeaturedProducts";
+import { useEffect } from "react";
+
 
 
 const categories = [
@@ -12,6 +16,13 @@ const categories = [
 
 
 const HomePage = () => {
+  const { fetchFeaturedProducts, products } = useProductStore();
+
+	useEffect(() => {
+		fetchFeaturedProducts();
+	}, [fetchFeaturedProducts]);
+
+
   return (
     <div className="relative min-h-screen text-white overflow-hidden">
       <div className="relative z-10 max-w-7xl  mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -28,6 +39,7 @@ const HomePage = () => {
             />
           ))}
         </div>
+        {products.length > 0 && <FeaturedProducts featuredProducts={products} />}
       </div>
     </div>
   )

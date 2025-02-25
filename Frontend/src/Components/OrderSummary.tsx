@@ -15,7 +15,10 @@ const OrderSummary = () => {
 
   const handleCheckout = async () => {
     try {
-      const response = await axios.post("/Payments/create-checkout-session", {products: cart, couponCode: coupon ? coupon.code : null});
+      const response = await axios.post("/Payments/create-checkout-session", {
+        products: cart, 
+        couponCode: coupon ? coupon.code : null,
+      });
       console.log(response.data)
       navigate("/payment", {state: {amount: response.data.Amount}});
     } catch (error) {
@@ -57,7 +60,7 @@ const OrderSummary = () => {
                 Coupon: ({coupon.code})
               </dt>
               <dd className="text-base font-medium text-emerald-400">
-                -{coupon.discountPercentage}
+                -{coupon.discountPercentage}%
               </dd>
             </dl>
           )}
