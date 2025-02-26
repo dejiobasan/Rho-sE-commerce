@@ -4,6 +4,7 @@ const redis = require("../Lib/Redis.js");
 const cloudinary = require("../Lib/Cloudinary.js");
 const { protectRoute, adminRoute } = require("../Middleware/authMiddleware.js");
 
+// Get all products Route
 router.get("/getAllproducts", protectRoute, adminRoute, async (req, res) => {
   try {
     const Products = await product.find({});
@@ -14,6 +15,7 @@ router.get("/getAllproducts", protectRoute, adminRoute, async (req, res) => {
   }
 });
 
+// Create a new product Route
 router.post("/createProduct", protectRoute, adminRoute, async (req, res) => {
   try {
     const { name, description, price, image, category } = req.body;
@@ -43,6 +45,7 @@ router.post("/createProduct", protectRoute, adminRoute, async (req, res) => {
   }
 });
 
+// Delete a product Route
 router.delete(
   "/deleteProduct/:id",
   protectRoute,
@@ -74,6 +77,7 @@ router.delete(
   }
 );
 
+//get featured products Route
 router.route("/getFeaturedProducts").get(async (req, res) => {
   try {
     let featuredProducts = await redis.get("featured_products");
@@ -96,6 +100,7 @@ router.route("/getFeaturedProducts").get(async (req, res) => {
   }
 });
 
+// get recommendations Route
 router.route("/recommendations").get(async (req, res) => {
   try {
     const products = await product.aggregate([
@@ -108,6 +113,7 @@ router.route("/recommendations").get(async (req, res) => {
   }
 });
 
+// get product by category Route
 router.route("/category/:Category").get(async (req, res) => {
   const { Category } = req.params;
   try {
@@ -118,6 +124,7 @@ router.route("/category/:Category").get(async (req, res) => {
   }
 });
 
+//toggle featured product Route
 router.route("/toggleFeaturedProduct/:id").patch(async (req, res) => {
   try {
     const neededProduct = await product.findById(req.params.id);
@@ -135,6 +142,7 @@ router.route("/toggleFeaturedProduct/:id").patch(async (req, res) => {
   }
 });
 
+//update featured product cache
 async function updateFeaturedProductCache() {
   try {
     const featuredProducts = await product.find({ isFeatured: true }).lean(); //lean() returns plain JavaScript

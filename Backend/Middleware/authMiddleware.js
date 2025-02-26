@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 let User = require("../Models/User.js");
 
 
-
+// Middleware to protect routes
 const protectRoute = async (req, res, next) => {
     try {
         const accessToken = req.cookies.accessToken;
@@ -27,8 +27,9 @@ const protectRoute = async (req, res, next) => {
         console.log("Error in protectRoute middleware", error.message);
         return res.status(401).json({ message: "Unauthorized - Invalid access token!"});
     }
-}
+};
 
+// Middleware to check if user is an admin
 const adminRoute = ((req, res, next) => {
    if(req.user && req.user.Role === "Admin") {
     next()

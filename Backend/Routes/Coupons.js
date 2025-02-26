@@ -3,6 +3,8 @@ let coupon = require("../Models/Coupon.js")
 
 const router = require("express").Router();
 
+
+// Get all coupons Route
 router.get("/getCoupon", protectRoute, async (req, res) => {
     try {
         const Coupon = await coupon.findOne({userId: req.user._id, isActive: true});
@@ -12,6 +14,7 @@ router.get("/getCoupon", protectRoute, async (req, res) => {
     }
 });
 
+// Add coupon Route
 router.post("/validateCoupon", protectRoute, async (req, res) => {
     try {
         const { code } = req.body;

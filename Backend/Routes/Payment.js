@@ -11,6 +11,7 @@ const Order = require("../Models/Order");
 app.use(cors());
 app.use(express.json());
 
+// Create a new coupon for a user
 async function createNewCoupon(userId) {
   await Coupon.findOneAndDelete({ userId });
   const newCoupon = new Coupon({
@@ -24,6 +25,7 @@ async function createNewCoupon(userId) {
   return newCoupon;
 }
 
+//Checkout and Order session
 router.post("/create-checkout-session", protectRoute, async (req, res) => {
   try {
     const { products, couponCode } = req.body;
@@ -68,6 +70,7 @@ router.post("/create-checkout-session", protectRoute, async (req, res) => {
   }
 });
 
+//Checkout Order save and success
 router.post("/checkout-success", protectRoute, async (req, res) => {
   try {
     const {products, totalAmount, flutterSessionId} = req.body;

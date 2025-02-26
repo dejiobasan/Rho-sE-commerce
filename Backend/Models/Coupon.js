@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+// Schema for Coupons
 const CounponsSchema = new mongoose.Schema({
   code: {
     type: String,
@@ -30,6 +31,7 @@ const CounponsSchema = new mongoose.Schema({
     timestamps: true,
 });
 
+// Model for Coupons
 const coupon = new mongoose.model("coupon", CounponsSchema);
 
 module.exports = coupon;

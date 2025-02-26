@@ -4,7 +4,9 @@ const { protectRoute, adminRoute } = require("../Middleware/authMiddleware");
 const { getAnalyticsData, getDailySalesData } = require("../Controllers/Analytics.Controller.js");
 
 
-
+// @desc Get analytics data
+// @route GET /api/analytics/getAnalytics
+// @access Private
 router.get("/getAnalytics", protectRoute, adminRoute, async (req, res) => {
     try {
 		const analyticsData = await getAnalyticsData();

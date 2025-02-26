@@ -2,7 +2,7 @@ const user = require("../Models/User");
 const product = require("../Models/Product");
 const Order = require("../Models/Order");
 
-
+//getAnalyticsData function will return the total number of users, products, total sales, and total revenue.
 const getAnalyticsData = async () => {
 	const totalUsers = await user.countDocuments();
 	const totalProducts = await product.countDocuments();
@@ -27,6 +27,7 @@ const getAnalyticsData = async () => {
 	};
 };
 
+//getDailySalesData function will return the daily sales data between the given startDate and endDate.
 const getDailySalesData = async (startDate, endDate) => {
 	try {
 		const dailySalesData = await Order.aggregate([
@@ -74,6 +75,7 @@ const getDailySalesData = async (startDate, endDate) => {
 	}
 };
 
+//getDatesInRange function will return an array of dates between the given startDate and endDate.
 function getDatesInRange(startDate, endDate) {
 	const dates = [];
 	let currentDate = new Date(startDate);

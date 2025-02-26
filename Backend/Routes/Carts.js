@@ -4,6 +4,7 @@ const User = require("../Models/User.js");
 
 const router = require("express").Router();
 
+// Get all products in the cart Route
 router.get("/getCartProducts", protectRoute, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).populate("CartItems.product");
@@ -24,6 +25,7 @@ router.get("/getCartProducts", protectRoute, async (req, res) => {
   }
 });
 
+// Add product to cart Route
 router.post("/addToCart", protectRoute, async (req, res) => {
   try {
     const { productId } = req.body;
@@ -61,6 +63,7 @@ router.post("/addToCart", protectRoute, async (req, res) => {
   }
 });
 
+// Remove product from cart Route
 router.delete("/removeAllFromCart", protectRoute, async (req, res) => {
   try {
     const { productId } = req.body;
@@ -82,6 +85,7 @@ router.delete("/removeAllFromCart", protectRoute, async (req, res) => {
   }
 });
 
+// Update quantity of product in cart Route
 router.put("/updateQuantity/:id", protectRoute, async (req, res) => {
   try {
     const { id: productId } = req.params;

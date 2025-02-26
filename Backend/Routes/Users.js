@@ -5,6 +5,7 @@ const redis = require("../Lib/Redis.js");
 let user = require("../Models/User.js");
 require("dotenv").config();
 
+// Generate tokens
 const generateTokens = (userId) => {
   const accessToken = jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: "15m",
@@ -17,6 +18,7 @@ const generateTokens = (userId) => {
   return { accessToken, refreshToken };
 };
 
+// Store refresh token in Redis
 const storeRefreshToken = async (userId, refreshToken) => {
   await redis.set(
     `refresh_token: ${userId}`,
@@ -26,6 +28,7 @@ const storeRefreshToken = async (userId, refreshToken) => {
   ); // 7days
 };
 
+// Set cookies
 const setCookies = (res, accessToken, refreshToken) => {
   res.cookie("accessToken", accessToken, {
     httpOnly: true, //prevent XSS attacks, cross site scripting attacks
@@ -41,6 +44,7 @@ const setCookies = (res, accessToken, refreshToken) => {
   });
 };
 
+// User Signup Route
 router.route("/signup").post(async (req, res) => {
   const { name, email, password } = req.body;
   const userExists = await user.findOne({ email });
@@ -80,6 +84,7 @@ router.route("/signup").post(async (req, res) => {
   setCookies(res, accessToken, refreshToken);
 });
 
+// User Login Route
 router.route("/login").post(async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -117,6 +122,7 @@ router.route("/login").post(async (req, res) => {
   }
 });
 
+// User Logout Route
 router.route("/logout").post(async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
@@ -136,6 +142,7 @@ router.route("/logout").post(async (req, res) => {
   }
 });
 
+// Refresh Token Route
 router.route("/refresh-token").post(async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
