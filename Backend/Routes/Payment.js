@@ -70,11 +70,11 @@ router.post("/create-checkout-session", protectRoute, async (req, res) => {
 
 router.post("/checkout-success", protectRoute, async (req, res) => {
   try {
-    const {user, products, totalAmount, flutterSessionId} = req.body;
+    const {products, totalAmount, flutterSessionId} = req.body;
     const newOrder = new Order({
-      user: user._id,
+      user: req.user._id,
       products: products.map((product) => ({
-        product: product._id,
+        product: product.id,
         quantity: product.quantity,
         price: product.Price,
       })),

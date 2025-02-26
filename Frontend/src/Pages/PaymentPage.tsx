@@ -5,6 +5,7 @@ import axios from "../lib/axios";
 import { useCartStore } from "../stores/useCartStore";
 
 
+
 const PaymentPage = () => {
   const location = useLocation();
   const { amount } = location.state || { amount: 0 };
@@ -65,9 +66,6 @@ const PaymentPage = () => {
       } else {
         try {
           await axios.post("/Payments/checkout-success", {
-            user: {
-              id: user?.id,
-            },
             products: cart.map((product) => ({
               id: product._id,
               quantity: product.quantity,
@@ -76,10 +74,10 @@ const PaymentPage = () => {
             totalAmount: amount,
             flutterSessionId: response.transaction_id,
           });
+          navigate("/purchase-success");
         } catch (error) {
           console.error("Error saving order:", error);
         }
-        navigate("/purchase-success");
         console.log("Transaction was successful!");
       };
       closePaymentModal();// this will close the modal programmatically
