@@ -2,12 +2,15 @@ import { create } from "zustand";
 import axios from "../lib/axios";
 import { toast } from "react-hot-toast";
 
+//An User interface that defines the shape of a user object
 interface User {
   id: string;
   Name: string;
   Email: string;
   Role: string;
 }
+
+//A SignupData interface that defines the shape of the data needed to sign up a user
 interface SignupData {
   name: string;
   email: string;
@@ -15,6 +18,7 @@ interface SignupData {
   confirmPassword: string;
 }
 
+//A SignupResponse interface that defines the shape of the response from the server when a user signs up
 interface SignupResponse {
   success: boolean;
   message: string;
@@ -26,11 +30,13 @@ interface SignupResponse {
   };
 }
 
+//A LoginData interface that defines the shape of the data needed to log in a user
 interface LoginData {
   email: string;
   password: string;
 }
 
+//A LoginResponse interface that defines the shape of the response from the server when a user logs in
 interface LoginResponse {
   success: boolean;
   message: string;
@@ -42,12 +48,14 @@ interface LoginResponse {
   };
 }
 
+//A LogoutResponse interface that defines the shape of the response from the server when a user logs out
 interface LogoutResponse {
   success: boolean;
   message: string;
 }
 
 
+//A UserStore interface that defines the shape of the store
 interface UserStore {
   user: User | null;
   loading: boolean;
@@ -59,11 +67,13 @@ interface UserStore {
   refreshToken: () => Promise<void>;
 }
 
+// Create a store
 export const useUserStore = create<UserStore>((set, get) => ({
   user: null,
   loading: false,
   checkingAuth: true,
 
+  //A signup state function that takes in a SignupData object and sends a POST request to the server to create a new user
   signup: async (data: SignupData) => {
     set({ loading: true });
 
@@ -88,6 +98,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
     set({ loading: false });
   },
 
+  //A login state function that takes in a LoginData object and sends a POST request to the server to log in a user
   login: async (data: LoginData) => {
     set({ loading: true });
 
@@ -106,6 +117,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
     set({ loading: false });
   },
 
+  //A logout state function that sends a POST request to the server to log out the user
   logout: async () => {
     try {
       const response = await axios.post<LogoutResponse>("/Users/logout");
@@ -121,6 +133,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
     }
   },
 
+  //A checkAuth state function that sends a GET request to the server to check if the user is authenticated
   checkAuth: async () => {
     set({ checkingAuth: true });
     try {
@@ -132,6 +145,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
     }
   },
 
+  //A refreshToken state function that sends a POST request to the server to refresh the user's token
   refreshToken: async () => {
 		// Prevent multiple simultaneous refresh attempts
 		if (get().checkingAuth) return;
@@ -150,6 +164,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
 let refreshPromise: Promise<void> | null = null;
 
+// Add an interceptor to handle 401 errors
 axios.interceptors.response.use(
 	(response) => response,
 	async (error) => {

@@ -41,7 +41,7 @@ const PaymentPage = () => {
   }
 
   const config = {
-    public_key: "FLWPUBK_TEST-8657a5e179ef8883cff0ae5a4de30180-X",
+    public_key: "", //Input your Flutterwave public key here.
     tx_ref: Date.now().toString(),
     amount: amount,
     currency: "NGN",

@@ -2,6 +2,7 @@ import { create } from "zustand";
 import axios from "../lib/axios";
 import { toast } from "react-hot-toast";
 
+//An Product interface that defines the shape of a product object
 interface Product {
   _id: string;
   Name: string;
@@ -11,7 +12,7 @@ interface Product {
   Image: string; // URL
   isFeatured: boolean;
 }
-
+//A productData interface that defines the shape of the data needed to create a product
 interface productData {
   name: string;
   description: string;
@@ -20,6 +21,7 @@ interface productData {
   image: string;
 }
 
+//A productStore interface that defines the shape of the store
 interface productStore {
   products: Product[];
   loading: boolean;
@@ -37,6 +39,7 @@ export const useProductStore = create<productStore>((set) => ({
 
   setProducts: (products: Product[]) => set({ products }),
 
+  //A createProduct state function that sends a POST request to the server to create a product
   createProduct: async (data: productData) => {
     set({ loading: true });
     try {
@@ -52,6 +55,7 @@ export const useProductStore = create<productStore>((set) => ({
     }
   },
 
+  //A fetchAllProducts state function that sends a GET request to the server to fetch all products
   fetchAllProducts: async () => {
     set({ loading: true });
     try {
@@ -64,6 +68,7 @@ export const useProductStore = create<productStore>((set) => ({
     }
   },
 
+  //A fetchProductsByCategory state function that sends a GET request to the server to fetch products by category
   fetchProductsByCategory: async (category) => {
     set({ loading: true });
     try {
@@ -76,6 +81,7 @@ export const useProductStore = create<productStore>((set) => ({
     }
   },
 
+  //A deleteProduct state function that sends a DELETE request to the server to delete a product
   deleteProduct: async (productId) => {
     set({ loading: true });
     try {
@@ -93,6 +99,7 @@ export const useProductStore = create<productStore>((set) => ({
     }
   },
 
+  //A toggleFeaturedProduct state function that sends a PATCH request to the server to toggle the featured status of a product
   toggleFeaturedProduct: async (productId) => {
     set({ loading: true });
     try {
@@ -114,6 +121,7 @@ export const useProductStore = create<productStore>((set) => ({
     }
   },
 
+  //A fetchFeaturedProducts state function that sends a GET request to the server to fetch featured products
   fetchFeaturedProducts: async () => {
     set({ loading: true });
     try {
