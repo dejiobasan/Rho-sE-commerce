@@ -31,6 +31,7 @@ interface productStore {
   toggleFeaturedProduct: (productId: string) => Promise<void>;
   fetchProductsByCategory: (category: string) => Promise<void>;
   fetchFeaturedProducts: () => Promise<void>;
+  setProducts: (products: Product[]) => void;
 }
 
 export const useProductStore = create<productStore>((set) => ({
