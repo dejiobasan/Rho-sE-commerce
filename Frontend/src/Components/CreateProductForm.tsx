@@ -21,7 +21,7 @@ const CreateProductForm = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await createProduct(newProduct);
+      await createProduct({ ...newProduct, price: parseFloat(newProduct.price) });
       setNewProduct({name: "", description: "", price: "", category: "", image: ""});
     } catch (error) {
       console.error("Product creation failed", error);
