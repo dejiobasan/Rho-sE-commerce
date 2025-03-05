@@ -16,7 +16,15 @@ const PaymentPage = () => {
   interface Customer {
     email: string;
     name: string;
+    phone_number: string
   }
+
+  interface FlutterWaveResponse {
+    status: string;
+    transaction_id: number;
+    tx_ref: string;
+  }
+  
 
   interface Customizations {
     title: string;
@@ -36,12 +44,12 @@ const PaymentPage = () => {
 
   interface FWConfig extends Config {
     text: string;
-    callback: (response: Record<string, unknown>) => void;
+    callback: (response: FlutterWaveResponse) => void;
     onClose: () => void;
   }
 
   const config = {
-    public_key: "", //Input your Flutterwave public key here.
+    public_key: import.meta.env.VITE_FLUTTERWAVE_PUBLICKEY, //Input your Flutterwave public key here.
     tx_ref: Date.now().toString(),
     amount: amount,
     currency: "NGN",
@@ -49,6 +57,7 @@ const PaymentPage = () => {
     customer: {
       email: user?.Email || "",
       name: user?.Name || "",
+      phone_number: "null",
     },
     customizations: {
       title: "Rho's Essence and More.",
@@ -60,7 +69,7 @@ const PaymentPage = () => {
   const fwConfig: FWConfig = {
     ...config,
     text: "Pay with Flutterwave!",
-    callback: async (response) => {
+    callback: async (response: FlutterWaveResponse) => {
       if (response.status !== "completed") {
         console.log("Transaction was not completed!");
       } else {

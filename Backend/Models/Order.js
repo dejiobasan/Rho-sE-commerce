@@ -30,7 +30,7 @@ const orderSchema = new mongoose.Schema({
         min: 0,
     },
     flutterSessionId: {
-        type: String,
+        type: Number,
         unique: true,
     },
 },
