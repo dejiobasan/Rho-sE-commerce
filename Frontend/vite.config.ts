@@ -7,7 +7,9 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:8000",
+        target: "https://rhobackend.onrender.com",
+        secure: true, 
+        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },
