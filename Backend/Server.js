@@ -10,7 +10,7 @@ const port = Number(process.env.PORT);
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // allow to server to accept request from different origin
+    origin: process.env.DEPLOYEDPORT, // allow to server to accept request from different origin
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
