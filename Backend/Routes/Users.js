@@ -69,10 +69,10 @@ router.route("/signup").post(async (req, res) => {
             success: true,
             message: "User added!",
             User: {
-              id: user._id,
-              Name: name,
-              Email: email,
-              Role: role,
+              id: newUser._id,
+              Name: newUser.name,
+              Email: newUser.email,
+              Role: newUser.role,
             },
           });
         })
