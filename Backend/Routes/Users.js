@@ -49,7 +49,7 @@ router.route("/signup").post(async (req, res) => {
   const { name, email, password } = req.body;
   const userExists = await user.findOne({ email });
   if (userExists) {
-    return res.status(400).json({ message: "User already exists" });
+    return res.status(400).json({ message: "Credentials already exists" });
   }
   const saltRounds = Number(process.env.saltRounds);
 
@@ -113,11 +113,12 @@ router.route("/login").post(async (req, res) => {
               });
             }
           });
+        } else {
+          res.status(401).json({ message: "Login failed" });
         }
       }
     });
   } catch (error) {
-    console.log("Error in Login Controller", error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -137,7 +138,6 @@ router.route("/logout").post(async (req, res) => {
     res.clearCookie("refreshToken");
     res.status(200).json({ success: true, message: "Logged out successfully" });
   } catch (error) {
-    console.log("Error in Login Controller", error);
     res.status(500).json({ message: "Server Error!", error: error.message });
   }
 });
