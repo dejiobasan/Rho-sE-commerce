@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCartStore } from "../stores/useCartStore";
+import { formatAmount } from "../lib/helpers";
 
 interface Product {
   _id: string;
@@ -78,7 +79,7 @@ const FeaturedProducts = ({ featuredProducts }: FeaturedProductsProps) => {
                         {product.Name}
                       </h3>
                       <p className="text-emerald-300 font-medium mb-4">
-                      &#8358;{product.Price.toFixed(2)}
+                      &#8358;{formatAmount(Number(product.Price.toFixed(2)))}
                       </p>
                       <button
                         onClick={() => addToCart(product)}

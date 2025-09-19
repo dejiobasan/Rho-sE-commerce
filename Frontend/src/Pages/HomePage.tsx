@@ -5,6 +5,7 @@ import { useEffect } from "react";
 
 
 
+
 const categories = [
   {href: "/Perfume", name: "Saviour", imageUrl: "../Perfume-Images/Perfume1.jpeg"},
   {href: "/Perfume", name: "Osma", imageUrl: "../Perfume-Images/Perfume2.jpeg"},
