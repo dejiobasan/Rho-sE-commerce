@@ -4,19 +4,17 @@ import { useUserStore } from "../stores/useUserStore";
 import axios from "../lib/axios";
 import { useCartStore } from "../stores/useCartStore";
 
-
-
 const PaymentPage = () => {
   const location = useLocation();
   const { amount } = location.state || { amount: 0 };
   const { user } = useUserStore();
   const navigate = useNavigate();
-  const {  cart } = useCartStore();
+  const { cart } = useCartStore();
 
   interface Customer {
     email: string;
     name: string;
-    phone_number: string
+    phone_number: string;
   }
 
   interface FlutterWaveResponse {
@@ -24,7 +22,6 @@ const PaymentPage = () => {
     transaction_id: number;
     tx_ref: string;
   }
-  
 
   interface Customizations {
     title: string;
@@ -88,8 +85,8 @@ const PaymentPage = () => {
           console.error("Error saving order:", error);
         }
         console.log("Transaction was successful!");
-      };
-      closePaymentModal();// this will close the modal programmatically
+      }
+      closePaymentModal(); // this will close the modal programmatically
     },
     onClose: () => {
       navigate("/purchase-cancel");
