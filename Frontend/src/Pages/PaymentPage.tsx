@@ -54,7 +54,7 @@ const PaymentPage = () => {
     customer: {
       email: user?.Email || "",
       name: user?.Name || "",
-      phone_number: "",
+      phone_number: "null",
     },
     customizations: {
       title: "Rho's Essence and More.",
